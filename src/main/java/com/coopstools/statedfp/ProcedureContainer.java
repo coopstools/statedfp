@@ -43,6 +43,10 @@ public class ProcedureContainer<S, T> {
         return BranchProcedureContainer.branch(procedure, predicate);
     }
 
+    public DivergentProcedureContainer<S, T> test(final BiPredicate<S, T> predicate) {
+        return DivergentProcedureContainer.branch(procedure, predicate);
+    }
+
     public Consumer<S> terminate(final BiConsumer<S, T> consumer) {
         return (param) -> {
             ValueContainer<T> finalValue = procedure.procede(param);
