@@ -4,8 +4,8 @@ This library exposes a functor that, on top of normal transformations, allows fo
 
 In addition to the allowance of a 'state', this functor also exposes a means for creating 'branches' in the flow of operation in a transform. Branches are created by calling the 'branch' method and supplieing a predicate that consumes either the current value, or the value and state. If the predicate returns false, the branch is ignored and normal operation resumes. If the predicate returns true, the branch is executed, and the rest of the transform is ignored.
 
-'''
-    Consumer<StateObject> operation = ProcedureContainer
+```
+Consumer<StateObject> operation = ProcedureContainer
             .initializeContainer(StateObject::getInitialValue)
             .map((v) -> createNewValueFromInitial(v))
             .map((s, v) -> createValueFromStateAndOldValue(s, v))
@@ -17,8 +17,8 @@ In addition to the allowance of a 'state', this functor also exposes a means for
             .map((v) -> runOneLastTransformOnGoodValue(v))
             .terminate((v) -> consumeValue(v);
             
-    operation.accept(operationState);
-'''
+operation.accept(operationState);
+```
 
 # Future Work
 
