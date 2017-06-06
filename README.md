@@ -20,7 +20,31 @@ Consumer<StateObject> operation = ProcedureContainer
 operation.accept(operationState);
 ```
 
-# Future Work
+# Branching
+In line with the branching functionality is a `test` branching method. Unlike the `branch` method that eventually ends in termination, the `test` method allows alternative paths of data transformation. After calling test() with a predicate, two methods are expose: `then` and `thenOrElse`. Then takes a single BiFunction that performs a transform on the data value, with the restriction that the same type must be returned. This allows for merging back into the fow of the overall transform.
+```
+Consumer<StateObject> operation = ProcedureContainer
+            .initializeContainer(StateObject::getInitialValue)
+            .map((v) -> createNewValueFromInitial(v))
+            .test((v) -> !isValueUpToPar(v))
+            .then((v) -> makeValueThatIsUpToPar(v))
+            .terminate((v) -> consumerValue(v));
+```
+Here, the `makeValueUpToPar` method will only be run if the `test` passes. As mentioned, `makeValueUpToPar` must be type invariant (returns the same type as it takes in). To get around this restriction, the `thenOrElse` method can be used. 
+```
+Consumer<StateObject> operation = ProcedureContainer
+            .initializeContainer(StateObject::getInitialValue)
+            .map((v) -> createNewValueFromInitial(v))
+            .test((v) -> containsProperty(v))
+            .thenOrElse(
+                (s, v) -> transformUsingProperty(v),
+                (s, v) -> transformWithoutProperty(v))
+            .terminate((v) -> consumerValue(v));
+```
 
-- Create method to allow branch to merge back in (Tricky since it needs to have the same type as the value going into the branch)
-- Extend the functor to be a full monad
+
+# Profunctor
+
+In the case where a complex transform must be performed on an intermediate value, it is possible to use generate a function from a ProcedureContainer. This can be done by calling the get
+
+

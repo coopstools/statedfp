@@ -1,5 +1,6 @@
 package com.coopstools.statedfp;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -64,6 +65,16 @@ public class ProcedureContainer<S, T> {
                 return;
 
             consumer.accept(finalValue.getValue());
+        };
+    }
+
+    public Function<S, Optional<T>> get() {
+
+        return s -> {
+            ValueContainer<T> containedValue = procedure.procede(s);
+            if (containedValue.isTerminated())
+                return Optional.empty();
+            return Optional.ofNullable(containedValue.getValue());
         };
     }
 }
