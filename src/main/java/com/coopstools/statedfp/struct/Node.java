@@ -9,4 +9,5 @@ interface Node<T> {
     T get(final long path);
     long getDepth(final long previous);
     long count();
+    Node<T> set(final long path, final T value);
 }

@@ -5,6 +5,7 @@
 package com.coopstools.statedfp.struct;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -171,5 +172,22 @@ public class PersistantArrayTest {
         PersistantArray<String> pa = PersistantArray.init(collection);
 
         assertEquals("5323", pa.get(5323L));
+    }
+
+    @Test
+    public void testValueReplacement() throws Exception {
+
+        List<String> collection = Stream
+                .iterate(0, i -> i + 1)
+                .limit(17)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+
+        PersistantArray<String> pa = PersistantArray.init(collection);
+
+        PersistantArray<String> newPa = pa.set(13L, "testValue");
+
+        assertNotEquals("testValue", pa);
+        assertEquals("testValue", newPa.get(13L));
     }
 }

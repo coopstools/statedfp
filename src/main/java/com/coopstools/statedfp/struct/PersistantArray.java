@@ -44,6 +44,19 @@ public class PersistantArray<T> {
 
     public T get(final long index) {
 
+        long reversedIndex = reverseIndex(index);
+        return topeNode.get(reversedIndex);
+    }
+
+    public PersistantArray<T> set(final long index, final T value) {
+
+        long reversedIndex = reverseIndex(index);
+        Node<T> newTopNode = topeNode.set(reversedIndex, value);
+        return new PersistantArray<>(newTopNode);
+    }
+
+    private long reverseIndex(final long index) {
+
         if (index + 1 > size)
             throw new IndexOutOfBoundsException(String.format("Array only has %d elements", size));
         long reversedIndex = 0;
@@ -52,6 +65,6 @@ public class PersistantArray<T> {
             long shiftedIndex = index >> i;
             reversedIndex |= (shiftedIndex & 1L);
         }
-        return topeNode.get(reversedIndex);
+        return reversedIndex;
     }
 }

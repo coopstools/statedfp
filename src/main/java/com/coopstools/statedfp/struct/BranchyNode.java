@@ -14,6 +14,7 @@ class BranchyNode<T> implements Node<T> {
     }
 
     BranchyNode(Node<T> leftNode, Node<T> rightNode) {
+
         this.leftNode = leftNode;
         this.rightNode = rightNode;
     }
@@ -30,7 +31,16 @@ class BranchyNode<T> implements Node<T> {
 
     @Override
     public long count() {
+
         long leftNodeCount = leftNode.count();
         return (rightNode == null) ? leftNodeCount : leftNodeCount + rightNode.count();
+    }
+
+    @Override
+    public Node<T> set(long path, T value) {
+
+        if ((path & 1L) == 0)
+            return new BranchyNode<>(leftNode.set(path >> 1, value), rightNode);
+        return new BranchyNode<>(leftNode, rightNode.set(path >> 1, value));
     }
 }
