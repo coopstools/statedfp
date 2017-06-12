@@ -4,6 +4,8 @@
  */
 package com.coopstools.statedfp.struct;
 
+import java.util.function.Consumer;
+
 class LeafyNode<T> implements Node<T> {
 
     private T leftValue;
@@ -39,5 +41,17 @@ class LeafyNode<T> implements Node<T> {
         if ((path & 1L) == 0)
             return new LeafyNode<>(value, rightValue);
         return new LeafyNode<>(leftValue, value);
+    }
+
+    @Override
+    public Node<T> add(T value, long newIndex) {
+        return new LeafyNode<>(leftValue, value);
+    }
+
+    @Override
+    public void forEach(Consumer<T> consumer) {
+        consumer.accept(leftValue);
+        if (rightValue != null)
+            consumer.accept(rightValue);
     }
 }
