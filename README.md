@@ -2,6 +2,16 @@
 
 This library exposes a functor that, on top of normal transformations, allows for the containment of 'state'. This state is exposed in such a way that it can be used in any call to 'map', effectively acting as an ecapsulated stated for the transforamtion. In practice, this can be any object; but, in theory, this object should be an effectively immutable, data structure.
 
+```
+Consumer<StateObject> operation = ProcedureContainer
+            .initializeContainer(StateObject::getInitialValue)
+            .map((v) -> createNewValueFromInitial(v))
+            .map((s, v) -> createValueFromStateAndOldValue(s, v))
+
+operation.accept(operationState);
+```
+
+# Branching
 In addition to the allowance of a 'state', this functor also exposes a means for creating 'branches' in the flow of operation in a transform. Branches are created by calling the 'branch' method and supplieing a predicate that consumes either the current value, or the value and state. If the predicate returns false, the branch is ignored and normal operation resumes. If the predicate returns true, the branch is executed, and the rest of the transform is ignored.
 
 ```
@@ -20,7 +30,7 @@ Consumer<StateObject> operation = ProcedureContainer
 operation.accept(operationState);
 ```
 
-# Branching
+# Single Line Branching
 In line with the branching functionality is a `test` branching method. Unlike the `branch` method that eventually ends in termination, the `test` method allows alternative paths of data transformation. After calling test() with a predicate, two methods are expose: `then` and `thenOrElse`. Then takes a single BiFunction that performs a transform on the data value, with the restriction that the same type must be returned. This allows for merging back into the fow of the overall transform.
 ```
 Consumer<StateObject> operation = ProcedureContainer
@@ -30,7 +40,9 @@ Consumer<StateObject> operation = ProcedureContainer
             .then((v) -> makeValueThatIsUpToPar(v))
             .terminate((v) -> consumerValue(v));
 ```
-Here, the `makeValueUpToPar` method will only be run if the `test` passes. As mentioned, `makeValueUpToPar` must be type invariant (returns the same type as it takes in). To get around this restriction, the `thenOrElse` method can be used. 
+Here, the `makeValueUpToPar` method will only be run if the `test` passes. 
+
+As mentioned, `makeValueUpToPar` must be type invariant (returns the same type as it takes in). To get around this restriction, the `thenOrElse` method can be used. Here, thenOrElse takes two Functions/BiFunctions, which both must take the same argument types and return the same type.
 ```
 Consumer<StateObject> operation = ProcedureContainer
             .initializeContainer(StateObject::getInitialValue)
@@ -43,8 +55,7 @@ Consumer<StateObject> operation = ProcedureContainer
 ```
 
 
-# Profunctor
-
-In the case where a complex transform must be performed on an intermediate value, it is possible to use generate a function from a ProcedureContainer. This can be done by calling the get
+# Immutable List
+This library also supports an immutable list (poorly) named PersistentArray. When an element is added to the list, or an elements value is updated, a new instance of the list is generated.
 
 
